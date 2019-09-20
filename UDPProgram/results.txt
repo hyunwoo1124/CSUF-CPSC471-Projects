@@ -1,0 +1,45 @@
+/usr/bin/python3.7 "/root/Desktop/FALL 2019/UDPProgram/UDPPingerClient.py"
+Ping attempt:  0  running.
+
+Sorry it took more than a second... time out...
+Ping attempt:  1  running.
+
+Sorry it took more than a second... time out...
+Ping attempt:  2  running.
+
+b'PING'
+Time elapsed:  1959 microseconds
+
+Ping attempt:  3  running.
+
+b'PING'
+Time elapsed:  655 microseconds
+
+Ping attempt:  4  running.
+
+b'PING'
+Time elapsed:  1673 microseconds
+
+Ping attempt:  5  running.
+
+Sorry it took more than a second... time out...
+Ping attempt:  6  running.
+
+b'PING'
+Time elapsed:  171 microseconds
+
+Ping attempt:  7  running.
+
+b'PING'
+Time elapsed:  67 microseconds
+
+Ping attempt:  8  running.
+
+b'PING'
+Time elapsed:  62 microseconds
+
+Ping attempt:  9  running.
+
+Sorry it took more than a second... time out...
+
+Process finished with exit code 0
