@@ -1,7 +1,15 @@
 import socket
 import ssl
+import base64
 
-msg = "\r\n I love computer networks!"
+# Need to login to a gmail account to send from Google SMTP server
+username = "mr6network9@gmail.com"
+password = "cpsc471project"
+
+# Email address to send the email to
+sentTo = "zvongrote@csu.fullerton.edu"
+
+msg = "I love computer networks!"
 endmsg = "\r\n.\r\n"
 
 # Choose a mail server (e.g. Google mail server) and call it mailserver
@@ -10,8 +18,9 @@ mailserver = ("smtp.gmail.com", 587)
 # Create socket called clientSocket and establish a TCP connection with mailserver
 # Uses 'with' so that the socket will always be closed
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clientSocket:
-    clientSocket.connect(mailserver)
 
+    # Try to connect with the mail server
+    clientSocket.connect(mailserver)
     recv = clientSocket.recv(1024).decode()
     print(recv)
     if recv[:3] != '220':
@@ -37,11 +46,43 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clientSocket:
     # Ask to authorize the user and print reply
     authUser = "AUTH LOGIN\r\n"
     sslClientSocket.sendall(authUser.encode())
-    authUserRecv = sslClientSocket.recv(1024)
-    print(f"Response form server after AUTH LOGIN: {authUserRecv.decode()}") # Looking for a 334 response code
+    authUserRecv = sslClientSocket.recv(1024).decode()
+    print(f"Response form server after AUTH LOGIN: {authUserRecv}")  # Expecting a 334 response code
 
-    # Send MAIL FROM command and print server response.
-    # mailFrom = "MAIL FROM: <me@test.com>\r\n"
-    # sslClientSocket.sendall(mailFrom.encode())
-    # mailFromResponse = sslClientSocket.recv(1024)
-    # print(f"Response from server after MAIL FROM: {mailFromResponse.decode()}")
+    # Encode and send the username
+    encodedUsername = base64.b64encode(username.encode())
+    sslClientSocket.sendall(encodedUsername + "\r\n".encode())
+    recv_auth_username = sslClientSocket.recv(1024).decode()
+    print(f"Response after sending username: {recv_auth_username}")  # Expecting s 334 response code
+
+    # Encode and send the password
+    encodedPassword = base64.b64encode(password.encode())
+    sslClientSocket.sendall(encodedPassword + "\r\n".encode())
+    recv_auth_password = sslClientSocket.recv(1024).decode()
+    print(f"Response after sending password: {recv_auth_password}")  # Expecting a 235 response code
+
+    # Send MAIL FROM command with the name of the email address
+    # sending the email, then print server response.
+    mailFrom = f"MAIL FROM: <{username}>\r\n"
+    sslClientSocket.sendall(mailFrom.encode())
+    mailFromResponse = sslClientSocket.recv(1024).decode()
+    print(f"Response from server after MAIL FROM: {mailFromResponse}")
+
+    # Send RCPT TO command with the email address to send the email to,
+    # then print server response.
+    rcptTo = f"RCPT TO: <{sentTo}>\r\n"
+    sslClientSocket.sendall(rcptTo.encode())
+    rcptToResponse = sslClientSocket.recv(1024).decode()
+    print(f"Response from server after RCPT TO: {rcptToResponse}")
+
+    # Send DATA command with message body with terminating sequence,
+    # then print server response.
+    sslClientSocket.sendall("DATA\r\n".encode())
+    sslClientSocket.sendall(f"{msg}{endmsg}".encode())
+    dataResponse = sslClientSocket.recv(1024).decode()
+    print(f"Response from server after DATA: {dataResponse}")
+
+    # Send quit message and print server response
+    sslClientSocket.sendall("QUIT \r\n".encode())
+    quitResponse = sslClientSocket.recv(1024).decode()
+    print(f"Response form server after QUIT: {quitResponse}")
