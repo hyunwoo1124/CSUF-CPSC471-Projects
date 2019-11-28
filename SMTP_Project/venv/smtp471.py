@@ -84,7 +84,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clientSocket:
     dataResponse = sslClientSocket.recv(1024).decode()
     print(f"Response from server after DATA: {dataResponse}")
 
-    # Terminate the connection to the SMTP ser by
+    # Terminate the connection to the SMTP server by
     # sending the quit message, and print server response
     sslClientSocket.sendall("QUIT \r\n".encode())
     quitResponse = sslClientSocket.recv(1024).decode()
