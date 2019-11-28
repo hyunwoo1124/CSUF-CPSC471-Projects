@@ -2,11 +2,13 @@ import socket
 import ssl
 import base64
 
-# Need to login to a gmail account to send from Google SMTP server
+# To send email with Google's SMTP server, you have to login using
+# a gmail account. The account with the credentials below was made
+# for this assignment.
 username = "mr6network9@gmail.com"
 password = "cpsc471project"
 
-# Email address to send the email to
+# Email address to send the email to.
 sentTo = "zvongrote@csu.fullerton.edu"
 
 msg = "I love computer networks!"
@@ -15,8 +17,8 @@ endmsg = "\r\n.\r\n"
 # Choose a mail server (e.g. Google mail server) and call it mailserver
 mailserver = ("smtp.gmail.com", 587)
 
-# Create socket called clientSocket and establish a TCP connection with mailserver
-# Uses 'with' so that the socket will always be closed
+# Create socket called clientSocket and establish a TCP connection with mailserver.
+# The socket is used as a context manager inside the 'with' statement.
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clientSocket:
 
     # Try to connect with the mail server
@@ -53,7 +55,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clientSocket:
     encodedUsername = base64.b64encode(username.encode())
     sslClientSocket.sendall(encodedUsername + "\r\n".encode())
     recv_auth_username = sslClientSocket.recv(1024).decode()
-    print(f"Response after sending username: {recv_auth_username}")  # Expecting s 334 response code
+    print(f"Response after sending username: {recv_auth_username}")  # Expecting a 334 response code
 
     # Encode and send the password
     encodedPassword = base64.b64encode(password.encode())
@@ -82,7 +84,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clientSocket:
     dataResponse = sslClientSocket.recv(1024).decode()
     print(f"Response from server after DATA: {dataResponse}")
 
-    # Send quit message and print server response
+    # Terminate the connection to the SMTP ser by
+    # sending the quit message, and print server response
     sslClientSocket.sendall("QUIT \r\n".encode())
     quitResponse = sslClientSocket.recv(1024).decode()
     print(f"Response form server after QUIT: {quitResponse}")
